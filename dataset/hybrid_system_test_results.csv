@@ -1,0 +1,6 @@
+Caso,ML_Tipo,ML_Conf,KB_Tipo,KB_Gravità,Finale_Tipo,Finale_Gravità,Accordo,Source
+CASO 1: Formula Standard in Ingegneria,parafrasi_insufficiente,76.66%,ERROR,ERROR,parafrasi_insufficiente,unknown,No,ml_only
+CASO 2: Plagio Mosaico Sofisticato,letterale,57.00%,ERROR,ERROR,letterale,unknown,No,ml_only
+CASO 3: Parafrasi con Citazione,nessuno,29.00%,ERROR,ERROR,nessuno,unknown,No,ml_only
+CASO 4: Testo Originale con Terminologia Comune,nessuno,69.00%,ERROR,ERROR,nessuno,unknown,No,ml_only
+CASO 5: Plagio Letterale Mascherato,parafrasi_insufficiente,92.00%,ERROR,ERROR,parafrasi_insufficiente,unknown,No,ml_only

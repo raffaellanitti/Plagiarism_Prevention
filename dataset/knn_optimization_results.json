@@ -1,0 +1,14 @@
+{
+    "best_params": {
+        "algorithm": "auto",
+        "metric": "euclidean",
+        "n_neighbors": 3,
+        "p": 1,
+        "weights": "distance"
+    },
+    "best_cv_score": 0.9661515613597695,
+    "test_accuracy": 0.96,
+    "baseline_cv_score": 0.9236503095606434,
+    "baseline_test_accuracy": 0.945,
+    "improvement": 0.015000000000000013
+}

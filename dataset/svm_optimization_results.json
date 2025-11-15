@@ -1,0 +1,13 @@
+{
+    "best_params": {
+        "C": 10,
+        "degree": 4,
+        "gamma": "scale",
+        "kernel": "poly"
+    },
+    "best_cv_score": 0.9649209923076343,
+    "test_accuracy": 0.965,
+    "baseline_cv_score": 0.949981255598798,
+    "baseline_test_accuracy": 0.95,
+    "improvement": 0.015000000000000013
+}
