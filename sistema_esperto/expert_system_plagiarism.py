@@ -2,8 +2,8 @@
 Sistema Esperto per Rilevamento Plagio - Interfaccia Grafica
 Integra Knowledge Base Prolog con interfaccia Python/Tkinter
 
-Autore: [Nome Cognome]
-Matricola: [XXXXXX]
+Autore: [Raffaella Nitti]
+Matricola: [796132]
 """
 
 import tkinter as tk
