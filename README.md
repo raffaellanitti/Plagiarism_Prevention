@@ -46,7 +46,7 @@ cd ICON-Plagiarism_Prevention
 
 Prima di eseguire il progetto è necessario installare le dipendenze richieste (si consiglia di creare prima un ambiente virtuale e di attivarlo):
 
-### Creazione ambiente virtuale:**
+### Creazione ambiente virtuale:
 
 **Mac/Linux:**
 
@@ -62,7 +62,7 @@ python -m venv venv
 venv\Scripts\activate 
 ```
 
-### 📦Installazione dipendenze:**
+### 📦Installazione dipendenze:
 
 ```bash
 pip install -r requirements.txt
@@ -73,7 +73,7 @@ pip install -r requirements.txt
 SWI-Prolog è necessario per il sistema esperto.
 
 * Mac: `brew install swi-prolog`
-* Windows/Linux: Download Sito Ufficiale
+* Windows/Linux: [Download Sito Ufficiale](https://www.swi-prolog.org/download/stable)
 
 ### 📍 Apprendimento Supervisionato
 
