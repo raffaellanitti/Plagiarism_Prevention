@@ -9,10 +9,10 @@ Il suo scopo principale è quello di rilevare e prevenire il plagio accademico a
 
 Nell'implementazione del progetto sono stati trattati i seguenti argomenti:
 
-* **📘 Apprendimento Supervisionato**: il modello impara dal dataset `plagiarism_dataset.csv` fornito in input e viene addestrato per classificare diversi tipi e livelli di plagio;
-* **📗 Apprendimento Supervisionato con Iperparametri**: il modello viene affinato per migliorare l'accuratezza delle sue previsioni attraverso tecniche di ottimizzazione;
-* **📕 Sistema Esperto**: tramite una base di conoscenza e un modello inferenziale in Prolog, viene creato un *Knowledge Base System* che classifica il tipo di plagio, valuta la gravità e fornisce raccomandazioni personalizzate;
-* **📙 Knowledge Graph**: rappresentazione delle relazioni tra tipi di plagio, discipline accademiche e regole di citazione attraverso un grafo di conoscenza.
+* **📘 Apprendimento Supervisionato**: il modello impara dal dataset `plagiarism_dataset.csv` fornito in input e viene addestrato per classificare diversi tipi e livelli di plagio (letterale, mosaico, parafrasi insufficiente, idee, nessuno);
+* **📗 Apprendimento Supervisionato con Iperparametri**: il modello viene affinato per migliorare l'accuratezza delle sue previsioni attraverso tecniche di ottimizzazione (GridSearchCV su Random Forest, SVM, KNN);
+* **📕 Sistema Esperto**: tramite una base di conoscenza e un modello inferenziale in Prolog, viene creato un *Knowledge Base System* che classifica il tipo di plagio, valuta la gravità contestuale (considerando disciplina e livello di studio) e fornisce raccomandazioni personalizzate;
+* **📙 Sistema Ibrido ML + KB**: integrazione di Machine Learning e reasoning simbolico per decisione più accurate, dove la Knowledge Base valida e corregge le predizioni del modello ML quando necessario.
 
 ---
 
@@ -24,8 +24,8 @@ Il repository contiene:
 * `dataset`: dataset utilizzato dal modello;
 * `documentazione`: documentazione del progetto;
 * `img`: grafici inseriti nella documentazione;
-* `sistema_esperto`: Knowledge Base System relativo all'argomento preso in esame;
-* `knowledge_graph`: rappresentazione grafica e logica del dominio del plagio accademico;
+* `sistema_esperto`: Knowledge Base System in Prolog con interfaccia grafica;
+* `integration`: Sistema Ibrido che integra Machine Learing e Knowledge Base;
 * `requirements.txt`: file con l'elenco di tutte le dipendenze necessarie.
 
 ---
@@ -44,11 +44,26 @@ e navigare all'interno della cartella principale:
 cd ICON-Plagiarism_Prevention
 ```
 
-Prima di eseguire il progetto è necessario installare le dipendenze richieste (si consiglia di creare prima un ambiente virtuale e di attivarlo: <https://aulab.it/guide-avanzate/come-creare-un-virtual-environment-in-python>):
+Prima di eseguire il progetto è necessario installare le dipendenze richieste (si consiglia di creare prima un ambiente virtuale e di attivarlo):
+
+### Creazione ambiente virtuale:**
+
+```bash
+python3 -m venv venv
+source venv/bin/activate #Mac/Linux
+#oppure: venv\Scripts\activate #Windows
+```
+
+### Installazione dipendenze:**
 
 ```bash
 pip install -r requirements.txt
 ```
+
+### Installazione SWI-Prolog (necessario per il sistema esperto):
+
+* Mac: `brew install swi-prolog`
+* Windows/Linux: Download Sito Ufficiale
 
 ### 📍 Apprendimento Supervisionato
 
@@ -58,7 +73,7 @@ Spostandoci nella cartella `apprendimento_supervisionato` mediante il comando:
 cd apprendimento_supervisionato
 ```
 
-è possibile eseguire nell'ordine i file `preprocessing_simple.py` e `train_val_robust.py` per eseguire rispettivamente le fasi di *Preprocessing* e *Training and Evaluation* che rappresentano le prime tipiche fasi di un progetto di Machine Learning.  
+è possibile eseguire nell'ordine i file `preprocessing.py` e `train_val.py` per eseguire rispettivamente le fasi di *Preprocessing* e *Training and Evaluation* che rappresentano le prime tipiche fasi di un progetto di Machine Learning.  
 Il comando da digitare è il seguente:
 
 ```bash
@@ -71,45 +86,64 @@ sostituendo **nome\_del\_file.py** con il file che si vuole eseguire (ad esempio
 
 ### 📍 Apprendimento Supervisionato con Iperparametri
 
-Per la fase di tuning, si è deciso di migliorare i modelli *Random Forest*, *SVM* e *KNN*.  
-Per visualizzare i risultati dell'ottimizzazione di ogni modello, è possibile eseguire i file `optimized_random_forest.py`, `optimized_svm.py` e `optimized_knn.py` digitando lo stesso comando descritto precedentemente.
+Per ottimizzare i tre modelli migliori:
+
+```bash
+# Random Forest (richiede ~5-10 minuti)
+python optimized_random_forest.py
+
+# SVM (richiede ~5-10 minuti)
+python optimized_svm.py
+
+# KNN (richiede ~3-5 minuti)
+python optimized_knn.py
+```
+Ogni script:
+* Esegue GridSearchCV con 5-fold CV
+* Confronta baseline vs ottimizzato
+* Genera grafici comparativi
+* Salva il modello ottimizzato 
 
 ### 📍 Sistema Esperto
 
-Per eseguire il Knowledge Base System è necessario installare l'ambiente di sviluppo [SWI-Prolog](https://www.swi-prolog.org/download/devel) (❗️spuntare l'aggiunta alla variabile *path*).  
-Successivamente, è necessario navigare all'interno della cartella `sistema_esperto` con il seguente comando (se ci si trova nella cartella principale `ICON-Plagiarism_Prevention`):
+**Prerequisiti:**
+  * SWI-Prolog installato e aggiunto al PATH
 
+**Esecuzione:**
 ```bash
 cd sistema_esperto
-```
 
-oppure (se ci si trova nella cartella `apprendimento_supervisionato`):
-
-```bash
-cd ../sistema_esperto
-```
-
-e digitare il comando:
-
-```bash
 python expert_system_plagiarism.py
 ```
+Si aprirà un'interfaccia grafica dove è possibile:
+* Impostare parametri di input (similarità, percentuale, disciplina, ecc..)
+* Analizzare il testo tramite reasoning Prolog
+* Visualizzare tipo di plagio, gravità e raccomandazioni
 
-per lanciare l'interfaccia utente realizzata per il sistema esperto.
+La Knowledge Base include:
+* 50+ regole Prolog
+* Reasoning multi-livello
+* Valutazione contestuale per disciplina e livello studio
+* Raccomandazioni personalizzate
 
-### 📍 Knowledge Graph
+### 📍 Sistema Ibrido ML + KB
 
-Per visualizzare il grafo di conoscenza del dominio del plagio accademico, navigare nella cartella `knowledge_graph`:
+Per testare il sistema ibrido che integra Machine Learning e Knowledge Base:
 
 ```bash
-cd knowledge_graph
+cd integration
 ```
 
-ed eseguire:
+Esegui il:
 
 ```bash
-python visualize_kg.py
+# Demo base
+python hybrid_system.py
+
+# Test casi complessi
+python test_hybrid_system.py
 ```
+Il sistema ibrido combina le predizioni del modello ML con il reasoning simbolico della Knowledge Base per decisioni più accurate. In caso di disaccordo tra ML e KB, il sistema esperto prevale (approccio conservativo).
 
 ---
 

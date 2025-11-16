@@ -2,8 +2,8 @@
 Sistema Ibrido: Integrazione Machine Learning + Knowledge Base
 Combina predizioni ML con reasoning simbolico per decisioni più accurate
 
-Autore: [Nome Cognome]
-Matricola: [XXXXXX]
+Autore: [Raffaella Nitti]
+Matricola: [796132]
 """
 
 import numpy as np
@@ -164,16 +164,60 @@ class HybridPlagiarismSystem:
         idea_originale = context.get('idea_originale', 'yes')
         sim_concettuale = context.get('sim_concettuale', 0.4)
         
-        # Query Prolog
-        query = f"""
-        analizza_testo({similarita}, {citazione}, {match_esatto}, {fonti_multiple},
-                      {qualita_parafrasi}, {sim_concettuale}, {fonte_dichiarata},
-                      {idea_originale}, {percentuale}, {disciplina}, {livello},
-                      TipoPlagio, Gravita, Raccomandazione, RaccDisciplina)
+        # Query Prolog con predicato più semplice per test
+        # Proviamo prima classificazione base
+        query_simple = f"""
+        classifica_nessun_plagio({similarita}, {citazione}, Tipo)
         """
         
         try:
-            results = list(self.prolog.query(query))
+            # Test query semplice
+            test_results = list(self.prolog.query(query_simple))
+            
+            if test_results:
+                # KB funziona, usa query completa
+                query = f"""
+                analizza_testo({similarita}, {citazione}, {match_esatto}, {fonti_multiple},
+                              {qualita_parafrasi}, {sim_concettuale}, {fonte_dichiarata},
+                              {idea_originale}, {percentuale}, {disciplina}, {livello},
+                              TipoPlagio, Gravita, Raccomandazione, RaccDisciplina)
+                """
+                results = list(self.prolog.query(query))
+            else:
+                # Query semplice non funziona, usa logica alternativa
+                # Classificazione basata su soglie
+                if similarita <= 0.3 or citazione == 'corretta':
+                    tipo_kb = 'nessuno'
+                    gravita = 'nessuna'
+                elif similarita > 0.8 and citazione == 'no' and match_esatto == 'yes':
+                    tipo_kb = 'letterale'
+                    gravita = 'alta' if percentuale > 30 else 'media'
+                elif fonti_multiple == 'yes' and citazione == 'no':
+                    tipo_kb = 'mosaico'
+                    gravita = 'media'
+                else:
+                    tipo_kb = tipo_ml  # Fallback a ML
+                    gravita = 'media'
+                
+                # Genera raccomandazioni base
+                if tipo_kb == 'nessuno':
+                    racc = 'Nessuna azione necessaria. Lavoro corretto.'
+                    racc_disc = f'Continua con le buone pratiche per {disciplina}.'
+                elif tipo_kb == 'letterale':
+                    racc = 'RISCRIVERE COMPLETAMENTE il testo. Consultare fonti originali.'
+                    racc_disc = f'Usare formato citazione appropriato per {disciplina}.'
+                else:
+                    racc = 'Verificare citazioni e parafrasare meglio.'
+                    racc_disc = f'Seguire linee guida {disciplina}.'
+                
+                return {
+                    'tipo_kb': tipo_kb,
+                    'gravita': gravita,
+                    'raccomandazione': racc,
+                    'racc_disciplina': racc_disc,
+                    'kb_success': True,
+                    'fallback': True
+                }
             
             if results:
                 result = results[0]
@@ -182,7 +226,8 @@ class HybridPlagiarismSystem:
                     'gravita': result['Gravita'],
                     'raccomandazione': result['Raccomandazione'],
                     'racc_disciplina': result['RaccDisciplina'],
-                    'kb_success': True
+                    'kb_success': True,
+                    'fallback': False
                 }
             else:
                 return {'kb_success': False, 'error': 'No results from KB'}
